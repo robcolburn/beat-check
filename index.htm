@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width" />
+  <title>Beat</title>
+
+<style>
+b{color:red}
+i{color:green}
+#state{position:fixed;top:0;right:0;}
+</style>
+</head>
+<body>
+  <div id="log"></div>
+  <div id="state"></div>
+<script>
+var interval = 5
+var beats = 0
+var start = Date.now()
+var last = start
+
+function beat () {
+	var now = Date.now()
+	var total = Math.round((now - start) / 1000)
+	var since = Math.round((now - last) / 1000)
+	var interrupt = (since !== interval) ? '<b>Interrupted.</b>' : ''
+  log.innerHTML+='<p>Beat #'+beats+' @' + since + '/' + interval + 's. '+interrupt+'</p>'
+	beats++
+	last = now
+  ping(beats)
+  setTimeout(beat, interval*1000)
+}
+function ping () {
+	var xhr = new XMLHttpRequest()
+	xhr.id = beats
+	xhr.open('GET', location.href, true)
+	xhr.onreadystatechange = pong
+	xhr.send()
+}
+function pong () {
+	var ok = (this.readyState == 4 && this.status == 200)
+  state.innerHTML='<p>'+(ok ? '<i>NET OK</i>' : '<b>NET OFF</b>')+' ('+this.id+')</p>'
+}
+
+beat()
+
+
+</script>
+</body>
+</html>
